@@ -1,5 +1,7 @@
 <script>
-import { defineComponent, ref, reactive } from "vue";
+import { SVG } from "@svgdotjs/svg.js";
+import "@svgdotjs/svg.draggable.js";
+import { defineComponent, ref, reactive, watch } from "vue";
 import cards from "../configs/cards";
 
 export default defineComponent({
@@ -9,31 +11,78 @@ export default defineComponent({
 
     const sentences = reactive([
       {
-        text: '祝親愛的媽媽',
-        fontSize: 18,
+        text: "祝親愛的媽媽",
+        fontSize: 20,
         fontColor: {
-          name: 'Dark Gray',
-          hex: '#333'
+          name: "Pink",
+          hex: "pink",
         },
         position: {
-
-        }
+          x: 50,
+          y: 60
+        },
       },
       {
-        text: '祝給我幸福生活的媽媽幸福每一天。',
-        fontSize: 18,
+        text: "身體健康，事事順心，天天開心 ！！",
+        fontSize: 16,
         fontColor: {
-          name: 'Dark Gray',
-          hex: '#333'
-        }
-      }
-    ])
+          name: "Dark Gray",
+          hex: "#333",
+        },
+        position: {
+          x: 80,
+          y: 110
+        },
+      },
+    ]);
 
-    function onCardChange(card) {
-      activeCard.value = card;
+    let dragEventListeners = [];
+
+    function reDraw() {
+      const cardElement = document.getElementById("CardContent");
+      cardElement.innerHTML = "";
+
+      if (dragEventListeners.length > 0) {
+        dragEventListeners.forEach((el, i) => {
+          el.off("dragend.namespace");
+        });
+        dragEventListeners = [];
+      }
+
+      var draw = SVG().addTo(cardElement).size(400, 260);
+
+      sentences.forEach((sentence) => {
+        draw.text((add) => {
+          const tspan = add
+            .tspan(sentence.text)
+            .x(sentence.position.x)
+            .y(sentence.position.y)
+            .fill(sentence.fontColor.hex)
+            .font({ size: sentence.fontSize });
+          tspan.draggable();
+
+          const e = tspan.on("dragend.namespace", function (event) {
+            const { x, y} = event.detail.box;
+            sentence.position.x = x
+            sentence.position.y = y
+          });
+          dragEventListeners.push(e);
+        });
+      });
     }
 
-    return { cards, onCardChange, activeCard, sentences };
+    let f = 0;
+    function onCardChange(card) {
+      activeCard.value = card;
+      if (f === 0) {
+        f =1
+      setTimeout(() => {
+        reDraw();
+      }, 0);
+      }
+    }
+
+    return { cards, onCardChange, activeCard, sentences, reDraw };
   },
 });
 </script>
@@ -51,35 +100,64 @@ export default defineComponent({
       </div>
     </div>
     <div v-if="activeCard">
-      <div class="jjj">
-        <img :src="activeCard.image_url" />
+      <div class="outer-jjj">
+        <div
+          id="CardContent"
+          class="jjj"
+          :style="{ 'background-image': `url(${activeCard.image_url})` }"
+        >
+          <!-- SVG will draw over here -->
+        </div>
       </div>
       <div>
-        <div style="text-align: center;margin-bottom: 15px;">
+        <div style="text-align: center; margin-bottom: 15px">
           <label style="margin-right: 15px">Font style</label>
           <input type="text" value="Roboto" />
         </div>
         <div class="as" v-for="(sentence, i) of sentences" :key="i">
           <div>
-            <textarea rows="4" v-model="sentence.text"></textarea>
+            <textarea
+              rows="4"
+              v-model="sentence.text"
+              @change="reDraw"
+            ></textarea>
           </div>
           <div style="display: flex">
             <div style="margin-right: 15px">
               <div>
                 <label for="">Font size</label>
               </div>
-              <input type="text" v-model="sentence.fontSize" />
+              <input type="text" v-model="sentence.fontSize" @change="reDraw" />
             </div>
             <div>
               <div>
                 <label for="">Font color</label>
               </div>
-              <input type="text"  v-model="sentence.fontColor.name" />
+              <input
+                type="text"
+                v-model="sentence.fontColor.name"
+                @change="reDraw"
+              />
             </div>
           </div>
         </div>
-        <div style="text-align:center;height:30px;line-height:30px;margin-top: 30px;">
-          <span style="border: 1px solid rgb(145, 145, 245);padding: 5px 15px;color: rgb(145, 145, 245);font-weight:bold;">Add new sentence</span>
+        <div
+          style="
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+            margin-top: 30px;
+          "
+        >
+          <span
+            style="
+              border: 1px solid rgb(145, 145, 245);
+              padding: 5px 15px;
+              color: rgb(145, 145, 245);
+              font-weight: bold;
+            "
+            >Add new sentence</span
+          >
         </div>
       </div>
     </div>
@@ -122,12 +200,17 @@ export default defineComponent({
   }
 }
 
+.outer-jjj {
+  // background-color: #f1f1f1;
+}
+
 .jjj {
-  padding: 15px 15px 0 15px;
-  width: 100%;
-  img {
-    width: 100%;
-  }
+  width: 400px;
+  height: 226px;
+  background-size: 100% auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0 auto;
 }
 
 .as {
