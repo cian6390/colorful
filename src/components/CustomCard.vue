@@ -62,7 +62,7 @@ export default defineComponent({
           console.log(add)
           const tspan = add
             .fill(sentence.fontColor.hex)
-            .font({ family: `${design.fontFamily}, Noto Sans TC` , size: `${sentence.fontSize}pt` })
+            .font({ family: `${design.fontFamily}, 'Noto Sans TC', sans-serif` , size: `${sentence.fontSize}pt` })
             .tspan(sentence.text)
             .x(sentence.position.x)
             .y(sentence.position.y)
@@ -98,10 +98,10 @@ export default defineComponent({
         value: 'Roboto'
       },{
         title: 'Press Start 2P',
-        value: 'Press Start 2P'
+        value: "'Press Start 2P'"
       }, {
         title: 'Noto Sans TC',
-        value: 'Noto Sans TC'
+        value: "'Noto Sans TC'"
       }, {
         title: '仿宋體',
         value: '仿宋體'
