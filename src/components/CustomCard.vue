@@ -9,62 +9,69 @@ export default defineComponent({
   setup() {
     const activeCard = ref(null);
 
-    const sentences = reactive([
-      {
-        text: "祝親愛的媽媽",
-        fontSize: 20,
-        fontColor: {
-          name: "Pink",
-          hex: "pink",
+    const design = reactive({
+      fontFamily: "Nunito",
+      sentences: [
+        {
+          text: "To mom ~",
+          fontSize: 20,
+          fontColor: {
+            name: "Pink",
+            hex: "pink",
+          },
+          position: {
+            x: 50,
+            y: 60,
+          },
         },
-        position: {
-          x: 50,
-          y: 60
+        {
+          text: "身體健康，事事順心，天天開心 ！！",
+          fontSize: 12,
+          fontColor: {
+            name: "Dark Gray",
+            hex: "#333",
+          },
+          position: {
+            x: 80,
+            y: 110,
+          },
         },
-      },
-      {
-        text: "身體健康，事事順心，天天開心 ！！",
-        fontSize: 16,
-        fontColor: {
-          name: "Dark Gray",
-          hex: "#333",
-        },
-        position: {
-          x: 80,
-          y: 110
-        },
-      },
-    ]);
+      ],
+    });
 
     let dragEventListeners = [];
 
-    function reDraw() {
-      const cardElement = document.getElementById("CardContent");
-      cardElement.innerHTML = "";
-
+    function cleanDragEventListeners() {
       if (dragEventListeners.length > 0) {
         dragEventListeners.forEach((el, i) => {
           el.off("dragend.namespace");
         });
         dragEventListeners = [];
       }
+    }
+
+    function reDraw() {
+      const cardElement = document.getElementById("CardContent");
+      cardElement.innerHTML = "";
+      cleanDragEventListeners()
 
       var draw = SVG().addTo(cardElement).size(400, 260);
 
-      sentences.forEach((sentence) => {
+      design.sentences.forEach((sentence) => {
         draw.text((add) => {
+          console.log(add)
           const tspan = add
+            .fill(sentence.fontColor.hex)
+            .font({ family: `${design.fontFamily}, Noto Sans TC` , size: `${sentence.fontSize}pt` })
             .tspan(sentence.text)
             .x(sentence.position.x)
             .y(sentence.position.y)
-            .fill(sentence.fontColor.hex)
-            .font({ size: sentence.fontSize });
           tspan.draggable();
 
           const e = tspan.on("dragend.namespace", function (event) {
-            const { x, y} = event.detail.box;
-            sentence.position.x = x
-            sentence.position.y = y
+            const { x, y } = event.detail.box;
+            sentence.position.x = x;
+            sentence.position.y = y;
           });
           dragEventListeners.push(e);
         });
@@ -75,14 +82,36 @@ export default defineComponent({
     function onCardChange(card) {
       activeCard.value = card;
       if (f === 0) {
-        f =1
-      setTimeout(() => {
-        reDraw();
-      }, 0);
+        f = 1;
+        setTimeout(() => {
+          reDraw();
+        }, 0);
       }
     }
 
-    return { cards, onCardChange, activeCard, sentences, reDraw };
+    const fonts = [
+      {
+        title: 'Nunito',
+        value: 'Nunito'
+      }, {
+        title: 'Roboto',
+        value: 'Roboto'
+      },{
+        title: 'Press Start 2P',
+        value: 'Press Start 2P'
+      }, {
+        title: 'Noto Sans TC',
+        value: 'Noto Sans TC'
+      }, {
+        title: '仿宋體',
+        value: '仿宋體'
+      }, {
+        title: '明體',
+        value: '明體'
+      }
+    ]
+
+    return { cards, onCardChange, activeCard, design, reDraw, fonts };
   },
 });
 </script>
@@ -112,9 +141,11 @@ export default defineComponent({
       <div>
         <div style="text-align: center; margin-bottom: 15px">
           <label style="margin-right: 15px">Font style</label>
-          <input type="text" value="Roboto" />
+          <select v-model="design.fontFamily" @change="reDraw">
+            <option v-for="font of fonts" :key="font.value" :value="font.value" :selected="design.fontFamily === font.value">{{ font.title }}</option>
+          </select>
         </div>
-        <div class="as" v-for="(sentence, i) of sentences" :key="i">
+        <div class="as" v-for="(sentence, i) of design.sentences" :key="i">
           <div>
             <textarea
               rows="4"
