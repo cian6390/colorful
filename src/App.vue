@@ -15,6 +15,10 @@ export default defineComponent({
     const data = reactive({});
     const activeStep = ref(step1)
 
+    const idea = reactive({
+
+    })
+
     function toNextStep () {
       if (activeStep.value === step1) {
         activeStep.value = step2
@@ -23,7 +27,11 @@ export default defineComponent({
       }
     }
 
-    return { ...data, activeStep, step1, step2, toNextStep };
+    function onGiftBoxUpdate(data) {
+      console.log(data)
+    }
+
+    return { ...data, activeStep, step1, step2, toNextStep, onGiftBoxUpdate };
   },
 });
 </script>
@@ -31,14 +39,13 @@ export default defineComponent({
 <template>
   <div id="CustomApp">
     <div v-if="activeStep === step1">
-      <CustomGiftBox />
+      <CustomGiftBox @update="onGiftBoxUpdate" />
     </div>
     <div v-if="activeStep === step2">
       <CustomCard />
     </div>
-    <div class="control-panel">
-      <button @click="toNextStep">下一步</button>
-      <button v-if="activeStep === step2" style="margin-left: 30px;" @click="toNextStep">略過</button>
+    <div @click="toNextStep" class="control-panel">
+      下一步
     </div>
   </div>
 </template>
@@ -48,7 +55,7 @@ export default defineComponent({
   width: 100vw;
   height: 100vh;
   position: relative;
-  background-color: #f1f1f1;
+  background-color: #fff;
 }
 
 .control-panel {
@@ -57,20 +64,12 @@ export default defineComponent({
   right: 0;
   top: auto;
   width: 100%;
-  height: 90px;
+  height: 60px;
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 2px dashed gray;
-  button {
-    flex: none;
-    color: white;
-    font-size: 18px;
-    background-color:blue;
-    border: none;
-    height: 40px;
-    width: 120px;
-  }
+  font-size: 28px;
+  background-color: rgba(255, 198, 129, 0.3);
 }
 </style>

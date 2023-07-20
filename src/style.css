@@ -4,4 +4,13 @@ html, body {
   height: 100%;
   width: 100%;
   position: relative;
+  box-sizing: border-box;
+}
+
+html * {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
 }
