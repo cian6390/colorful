@@ -39,7 +39,8 @@ export default defineComponent({
 <template>
   <div id="CustomApp">
     <div v-if="activeStep === step1">
-      <CustomGiftBox @update="onGiftBoxUpdate" />
+      <CustomCard />
+      <!-- <CustomGiftBox @update="onGiftBoxUpdate" /> -->
     </div>
     <div v-if="activeStep === step2">
       <CustomCard />
