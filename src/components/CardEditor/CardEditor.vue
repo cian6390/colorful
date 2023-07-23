@@ -18,6 +18,7 @@ import StickerBook from './StickerBook.vue'
 /** data and assets */
 import cardsSource from "../../configs/cards";
 import stickersSource from "../../configs/stickers";
+import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/vue/24/outline'
 
 export default defineComponent({
   name: "CardEditor",
@@ -25,12 +26,15 @@ export default defineComponent({
     CardBook,
     TextForm,
     MainToolBar,
-    StickerBook
+    StickerBook,
+    MagnifyingGlassMinusIcon,
+    MagnifyingGlassPlusIcon
   },
   setup() {
     let editor;
     let canvas;
     let cardImage;
+    let canvasSize = ref('large')
 
     const isDevMode = ref(import.meta.env.MODE === "development")
 
@@ -48,12 +52,19 @@ export default defineComponent({
       return fontsAreReady.value && sampleIsReady.value;
     });
 
-    function fitCanvasToDeviceWidth() {
-      const dWidth = window.innerWidth
-      const dHeight = dWidth * (4/7)
+    function toggleCanvasSize() {
 
-      canvas.setDimensions({ width: `${dWidth}px`, height: `${dHeight}px` }, { cssOnly: true })
-      cardImage.style.width = `${dWidth}px`
+      if (canvasSize.value === 'large') {
+        const dWidth = window.innerWidth
+        const dHeight = dWidth * (4/7)
+
+        canvas.setDimensions({ width: `${dWidth}px`, height: `${dHeight}px` }, { cssOnly: true })
+        cardImage.style.width = `${dWidth}px`
+        canvasSize.value = 'small'
+      } else {
+        canvas.setDimensions({ width: `700px`, height: `400px` }, { cssOnly: true })
+        cardImage.style.width = `700px`
+      }
       canvas.renderAll()
     }
 
@@ -168,6 +179,7 @@ export default defineComponent({
     }
 
     return {
+      canvasSize,
       isDevMode,
       cards,
       stickers,
@@ -179,7 +191,7 @@ export default defineComponent({
       changeCanvasBackground,
       onToolPicked,
       onStickerPicked,
-      fitCanvasToDeviceWidth
+      toggleCanvasSize
     };
   },
 });
@@ -187,7 +199,12 @@ export default defineComponent({
 <template>
   <div id="CardEditorApp">
     <div id="TopBar">
-      <button @click="fitCanvasToDeviceWidth">fit</button>
+      <div v-if="canvasSize === 'large'" @click="toggleCanvasSize">
+        <MagnifyingGlassMinusIcon style="height: 20px" />
+      </div>
+      <div v-if="canvasSize === 'small'" @click="toggleCanvasSize">
+        <MagnifyingGlassPlusIcon style="height: 20px" />
+      </div>
       <div v-if="isDevMode" class="top-bar__item" @click="download">download</div>
     </div>
     <div id="CardEditorCanvasContainer">
@@ -233,6 +250,10 @@ export default defineComponent({
   flex: none;
   height: 45px;
   border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 15px;
 }
 
 .main-tool-bar-container {
