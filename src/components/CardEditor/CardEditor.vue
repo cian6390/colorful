@@ -31,6 +31,10 @@ export default defineComponent({
     let editor;
     let canvas;
 
+    console.log()
+
+    const isDevMode = ref(import.meta.env.MODE === "development")
+
     const cards = reactive(cardsSource)
     const stickers = reactive(stickersSource)
 
@@ -155,6 +159,7 @@ export default defineComponent({
     }
 
     return {
+      isDevMode,
       cards,
       stickers,
       initialed,
@@ -172,7 +177,7 @@ export default defineComponent({
 <template>
   <div id="CardEditorApp">
     <div id="TopBar">
-      <div class="top-bar__item" @click="download">download</div>
+      <div v-if="isDevMode" class="top-bar__item" @click="download">download</div>
     </div>
     <div id="CardEditorCanvasContainer">
       <canvas id="CardEditorCanvas"></canvas>
