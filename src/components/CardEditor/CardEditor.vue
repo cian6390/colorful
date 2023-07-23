@@ -64,6 +64,7 @@ export default defineComponent({
       } else {
         canvas.setDimensions({ width: `700px`, height: `400px` }, { cssOnly: true })
         cardImage.style.width = `700px`
+        canvasSize.value = 'large'
       }
       canvas.renderAll()
     }
@@ -122,9 +123,10 @@ export default defineComponent({
     function onToolPicked(target) {
       if (target === 'text-form') {
         const text = editor.addText('新增文字', {
-          fontSize: 16,
+          fontSize: 24,
           left: 100,
-          top: 100,
+          top: 50,
+          width: 150,
           fill: '#333',
           fontFamily: 'Nunito'
         })
@@ -178,6 +180,12 @@ export default defineComponent({
       img.src = sticker.file_path
     }
 
+    function deleteTargetObject() {
+      const _targetObject = canvas.getActiveObject()
+      canvas.remove(_targetObject);
+      targetObject.value = null
+    }
+
     return {
       canvasSize,
       isDevMode,
@@ -191,7 +199,8 @@ export default defineComponent({
       changeCanvasBackground,
       onToolPicked,
       onStickerPicked,
-      toggleCanvasSize
+      toggleCanvasSize,
+      deleteTargetObject
     };
   },
 });
@@ -211,6 +220,7 @@ export default defineComponent({
       <canvas id="CardEditorCanvas"></canvas>
     </div>
     <div id="DetailPanel" style="overflow: auto;">
+      <button v-if="targetObject" @click="deleteTargetObject">刪除物件</button>
       <div v-show="targetDetailPanel === 'card-book'">
         <CardBook :cards="cards" @cardSelected="changeCanvasBackground" />
       </div>
