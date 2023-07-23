@@ -198,6 +198,7 @@ export default defineComponent({
   width: 100%;
   height: 100vh;
   max-width: 800px;
+  max-height: -webkit-fill-available;
   margin: 0 auto;
   position: relative;
   border: 1px solid #ccc;
@@ -215,10 +216,5 @@ export default defineComponent({
 
 #DetailPanel {
   height: calc(100vh - 45px - 400px - 80px);
-}
-@supports (-webkit-touch-callout: none) {
-  #DetailPanel {
-    height: calc(100vh - 45px - 400px - 80px - 80px) !important;
-  }
 }
 </style>
