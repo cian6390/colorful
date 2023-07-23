@@ -168,8 +168,6 @@ export default defineComponent({
       if (vw === window.innerWidth) {
         return
       }
-
-      calcToolPanelHeight()
     })
 
     function onStickerPicked(sticker) {
