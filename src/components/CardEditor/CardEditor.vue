@@ -30,8 +30,7 @@ export default defineComponent({
   setup() {
     let editor;
     let canvas;
-
-    console.log()
+    let cardImage;
 
     const isDevMode = ref(import.meta.env.MODE === "development")
 
@@ -48,6 +47,15 @@ export default defineComponent({
     const initialed = computed(() => {
       return fontsAreReady.value && sampleIsReady.value;
     });
+
+    function fitCanvasToDeviceWidth() {
+      const dWidth = window.innerWidth
+      const dHeight = dWidth * (4/7)
+
+      canvas.setDimensions({ width: `${dWidth}px`, height: `${dHeight}px` }, { cssOnly: true })
+      cardImage.style.width = `${dWidth}px`
+      canvas.renderAll()
+    }
 
     onMounted(() => {
       editor = useCardEditor("CardEditorCanvas", 700, 400);
@@ -137,6 +145,7 @@ export default defineComponent({
         img.style.height = "auto";
         document.querySelector(".canvas-container").append(img);
       }
+      cardImage = img
       img.src = card.image_url;
     }
 
@@ -169,7 +178,8 @@ export default defineComponent({
       targetDetailPanel,
       changeCanvasBackground,
       onToolPicked,
-      onStickerPicked
+      onStickerPicked,
+      fitCanvasToDeviceWidth
     };
   },
 });
@@ -177,6 +187,7 @@ export default defineComponent({
 <template>
   <div id="CardEditorApp">
     <div id="TopBar">
+      <button @click="fitCanvasToDeviceWidth">fit</button>
       <div v-if="isDevMode" class="top-bar__item" @click="download">download</div>
     </div>
     <div id="CardEditorCanvasContainer">
