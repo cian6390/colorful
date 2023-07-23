@@ -1,12 +1,12 @@
 <script>
 import { defineComponent, reactive, ref } from "vue";
-import CustomCard from "./components/CustomCard.vue";
+import CardEditor from './components/CardEditor/CardEditor.vue'
 import CustomGiftBox from "./components/CustomGiftBox.vue";
 
 export default defineComponent({
   name: "CustomApp",
   components: {
-    CustomCard,
+    CardEditor,
     CustomGiftBox,
   },
   setup() {
@@ -39,15 +39,15 @@ export default defineComponent({
 <template>
   <div id="CustomApp">
     <div v-if="activeStep === step1">
-      <CustomCard />
+      <CardEditor />
       <!-- <CustomGiftBox @update="onGiftBoxUpdate" /> -->
     </div>
     <div v-if="activeStep === step2">
-      <CustomCard />
+      <!--  -->
     </div>
-    <div @click="toNextStep" class="control-panel">
+    <!-- <div @click="toNextStep" class="control-panel">
       下一步
-    </div>
+    </div> -->
   </div>
 </template>
 
