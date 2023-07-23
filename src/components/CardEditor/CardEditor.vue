@@ -188,7 +188,7 @@ export default defineComponent({
         <TextForm />
       </div>
     </div>
-    <div>
+    <div class="main-tool-bar-container">
       <MainToolBar @toolPicked="onToolPicked" />
     </div>
   </div>
@@ -202,19 +202,29 @@ export default defineComponent({
   margin: 0 auto;
   position: relative;
   border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
 }
 
 #CardEditorCanvasContainer {
+  flex: none;
   width: 100%;
+  height: 400px;
   overflow-x: auto;
 }
 
 #TopBar {
+  flex: none;
   height: 45px;
   border-bottom: 1px solid #ccc;
 }
 
+.main-tool-bar-container {
+  flex: none;
+  height: 80px;
+}
+
 #DetailPanel {
-  height: calc(100vh - 525px);
+  flex: auto;
 }
 </style>
