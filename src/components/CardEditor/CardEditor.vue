@@ -215,6 +215,6 @@ export default defineComponent({
 }
 
 #DetailPanel {
-  height: max(calc(100vh - 525px), calc(660px - 525px));
+  height: calc(100vh - 525px);
 }
 </style>
