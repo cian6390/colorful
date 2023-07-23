@@ -202,7 +202,7 @@ export default defineComponent({
 #CardEditorApp {
   width: 100%;
   height: 100vh;
-  max-height: fill-available;
+  max-height: -webkit-fill-available;
   max-width: 800px;
   margin: 0 auto;
   position: relative;
