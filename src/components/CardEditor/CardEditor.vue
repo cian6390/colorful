@@ -13,12 +13,19 @@ import { useCardEditor } from "./CardEditor";
 import MainToolBar from "./MainToolBar.vue";
 import CardBook from "./CardBook.vue";
 import TextForm from "./TextForm.vue";
-import StickerBook from './StickerBook.vue'
+import StickerBook from "./StickerBook.vue";
 
 /** data and assets */
 import cardsSource from "../../configs/cards";
 import stickersSource from "../../configs/stickers";
-import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from '@heroicons/vue/24/outline'
+import {
+  ArrowRightIcon,
+  ArrowLeftIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  MagnifyingGlassMinusIcon,
+  MagnifyingGlassPlusIcon,
+} from "@heroicons/vue/24/outline";
 
 export default defineComponent({
   name: "CardEditor",
@@ -27,19 +34,23 @@ export default defineComponent({
     TextForm,
     MainToolBar,
     StickerBook,
+    ArrowRightIcon,
+    ArrowLeftIcon,
+    ArrowDownIcon,
+    ArrowUpIcon,
     MagnifyingGlassMinusIcon,
-    MagnifyingGlassPlusIcon
+    MagnifyingGlassPlusIcon,
   },
   setup() {
     let editor;
     let canvas;
     let cardImage;
-    let canvasSize = ref('large')
+    let canvasSize = ref("large");
 
-    const isDevMode = ref(import.meta.env.MODE === "development")
+    const isDevMode = ref(import.meta.env.MODE === "development");
 
-    const cards = reactive(cardsSource)
-    const stickers = reactive(stickersSource)
+    const cards = reactive(cardsSource);
+    const stickers = reactive(stickersSource);
 
     const fontsAreReady = ref(false);
     const sampleIsReady = ref(false);
@@ -53,20 +64,25 @@ export default defineComponent({
     });
 
     function toggleCanvasSize() {
+      if (canvasSize.value === "large") {
+        const dWidth = window.innerWidth;
+        const dHeight = dWidth * (4 / 7);
 
-      if (canvasSize.value === 'large') {
-        const dWidth = window.innerWidth
-        const dHeight = dWidth * (4/7)
-
-        canvas.setDimensions({ width: `${dWidth}px`, height: `${dHeight}px` }, { cssOnly: true })
-        cardImage.style.width = `${dWidth}px`
-        canvasSize.value = 'small'
+        canvas.setDimensions(
+          { width: `${dWidth}px`, height: `${dHeight}px` },
+          { cssOnly: true }
+        );
+        cardImage.style.width = `${dWidth}px`;
+        canvasSize.value = "small";
       } else {
-        canvas.setDimensions({ width: `700px`, height: `400px` }, { cssOnly: true })
-        cardImage.style.width = `700px`
-        canvasSize.value = 'large'
+        canvas.setDimensions(
+          { width: `700px`, height: `400px` },
+          { cssOnly: true }
+        );
+        cardImage.style.width = `700px`;
+        canvasSize.value = "large";
       }
-      canvas.renderAll()
+      canvas.renderAll();
     }
 
     onMounted(() => {
@@ -99,40 +115,39 @@ export default defineComponent({
       });
 
       document.fonts.ready.then((fontFaceSet) => {
-
         fontsAreReady.value = true;
 
-        changeCanvasBackground({ card: cards[0] })
+        changeCanvasBackground({ card: cards[0] });
 
         // example 裡面會有字型，所以要等自行準備好後才可以放置
-        editor.setupExample()
+        editor.setupExample();
 
-        sampleIsReady.value = true
+        sampleIsReady.value = true;
 
-        selectTool('text-form')
+        selectTool("text-form");
 
-        calcViewHeight()
+        calcViewHeight();
       });
     });
 
     function calcViewHeight() {
       let vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
     }
 
     function onToolPicked(target) {
-      if (target === 'text-form') {
-        const text = editor.addText('新增文字', {
+      if (target === "text-form") {
+        const text = editor.addText("新增文字", {
           fontSize: 24,
           left: 100,
           top: 50,
           width: 150,
-          fill: '#333',
-          fontFamily: 'Nunito'
-        })
+          fill: "#333",
+          fontFamily: "Nunito",
+        });
         editor.canvas.setActiveObject(text);
       }
-      selectTool(target)
+      selectTool(target);
     }
 
     function selectTool(target) {
@@ -144,10 +159,9 @@ export default defineComponent({
     }
 
     function changeCanvasBackground(data) {
-
-      cards.forEach(c => {
-        c.selected = c.title === data.card.title
-      })
+      cards.forEach((c) => {
+        c.selected = c.title === data.card.title;
+      });
 
       const card = data.card;
       let img = document.getElementById("CardImage");
@@ -158,30 +172,71 @@ export default defineComponent({
         img.style.height = "auto";
         document.querySelector(".canvas-container").append(img);
       }
-      cardImage = img
+      cardImage = img;
       img.src = card.image_url;
     }
 
-    const vw = window.innerWidth
-    window.addEventListener('resize', e => {
-      e.preventDefault()
+    const vw = window.innerWidth;
+    window.addEventListener("resize", (e) => {
+      e.preventDefault();
       if (vw === window.innerWidth) {
-        return
+        return;
       }
-    })
+    });
 
     function onStickerPicked(sticker) {
-      const img = new Image
-      img.addEventListener('load', () => {
-        editor.addImage(img)
-      })
-      img.src = sticker.file_path
+      const img = new Image();
+      img.addEventListener("load", () => {
+        editor.addImage(img);
+      });
+      img.src = sticker.file_path;
     }
 
     function deleteTargetObject() {
-      const _targetObject = canvas.getActiveObject()
+      const _targetObject = canvas.getActiveObject();
       canvas.remove(_targetObject);
-      targetObject.value = null
+      targetObject.value = null;
+    }
+
+    function scrollCanvas(axis, offset) {
+      const el = document.querySelector(".canvas-container");
+      const elParent = document.querySelector("#CardEditorCanvasContainer");
+
+      if (axis === "x") {
+        if (el.clientWidth <= elParent.clientWidth) {
+          return;
+        }
+        if (offset > 0) {
+          if (el.style.left === "-50%") {
+            el.style.left = "-100%";
+          } else {
+            el.style.left = "-50%";
+          }
+        } else {
+          if (el.style.left === "-100%") {
+            el.style.left = "-50%";
+          } else {
+            el.style.left = "0";
+          }
+        }
+      } else {
+        if (el.clientHeight <= elParent.clientHeight) {
+          return;
+        }
+        if (offset > 0) {
+          if (el.style.top === "-50%") {
+            el.style.top = "-100%";
+          } else {
+            el.style.top = "-50%";
+          }
+        } else {
+          if (el.style.top === "-100%") {
+            el.style.top = "-50%";
+          } else {
+            el.style.top = "0";
+          }
+        }
+      }
     }
 
     return {
@@ -198,7 +253,8 @@ export default defineComponent({
       onToolPicked,
       onStickerPicked,
       toggleCanvasSize,
-      deleteTargetObject
+      deleteTargetObject,
+      scrollCanvas,
     };
   },
 });
@@ -206,18 +262,31 @@ export default defineComponent({
 <template>
   <div id="CardEditorApp">
     <div id="TopBar">
+      <div class="scroll-control-panel" v-if="canvasSize === 'large'">
+        <div class="item-icon" @click="scrollCanvas('y', -25)">
+          <ArrowUpIcon />
+        </div>
+        <div class="item-icon" @click="scrollCanvas('y', 25)">
+          <ArrowDownIcon />
+        </div>
+        <div class="item-icon" @click="scrollCanvas('x', -25)">
+          <ArrowLeftIcon />
+        </div>
+        <div class="item-icon" @click="scrollCanvas('x', 25)">
+          <ArrowRightIcon />
+        </div>
+      </div>
       <div v-if="canvasSize === 'large'" @click="toggleCanvasSize">
         <MagnifyingGlassMinusIcon style="height: 20px" />
       </div>
       <div v-if="canvasSize === 'small'" @click="toggleCanvasSize">
         <MagnifyingGlassPlusIcon style="height: 20px" />
       </div>
-      <div v-if="isDevMode" class="top-bar__item" @click="download">download</div>
     </div>
     <div id="CardEditorCanvasContainer">
       <canvas id="CardEditorCanvas"></canvas>
     </div>
-    <div id="DetailPanel" style="overflow: auto;">
+    <div id="DetailPanel" style="overflow: auto">
       <button v-if="targetObject" @click="deleteTargetObject">刪除物件</button>
       <div v-show="targetDetailPanel === 'card-book'">
         <CardBook :cards="cards" @cardSelected="changeCanvasBackground" />
@@ -271,5 +340,28 @@ export default defineComponent({
 
 #DetailPanel {
   flex: auto;
+}
+
+.scroll-control-panel {
+  height: 100%;
+  display: flex;
+  padding: 0 15px;
+}
+
+.item-icon {
+  height: 100%;
+  display: flex;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  svg {
+    height: 20px;
+  }
+}
+
+.canvas-container {
+  top: 0;
+  left: 0;
+  transition: top, left linear 0.3s;
 }
 </style>
