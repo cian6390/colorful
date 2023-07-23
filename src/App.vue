@@ -1,6 +1,6 @@
 <script>
 import { defineComponent, reactive, ref } from "vue";
-import CardEditor from './components/CardEditor/CardEditor.vue'
+import CardEditor from "./components/CardEditor/CardEditor.vue";
 import CustomGiftBox from "./components/CustomGiftBox.vue";
 
 export default defineComponent({
@@ -10,25 +10,23 @@ export default defineComponent({
     CustomGiftBox,
   },
   setup() {
-    const step1 = 'make-gift-box'
-    const step2 = 'make-card'
+    const step1 = "make-gift-box";
+    const step2 = "make-card";
     const data = reactive({});
-    const activeStep = ref(step1)
+    const activeStep = ref(step1);
 
-    const idea = reactive({
+    const idea = reactive({});
 
-    })
-
-    function toNextStep () {
+    function toNextStep() {
       if (activeStep.value === step1) {
-        activeStep.value = step2
+        activeStep.value = step2;
       } else {
-        activeStep.value = step1
+        activeStep.value = step1;
       }
     }
 
     function onGiftBoxUpdate(data) {
-      console.log(data)
+      console.log(data);
     }
 
     return { ...data, activeStep, step1, step2, toNextStep, onGiftBoxUpdate };
@@ -38,16 +36,7 @@ export default defineComponent({
 
 <template>
   <div id="CustomApp">
-    <div v-if="activeStep === step1">
-      <CardEditor />
-      <!-- <CustomGiftBox @update="onGiftBoxUpdate" /> -->
-    </div>
-    <div v-if="activeStep === step2">
-      <!--  -->
-    </div>
-    <!-- <div @click="toNextStep" class="control-panel">
-      下一步
-    </div> -->
+    <CardEditor />
   </div>
 </template>
 
@@ -55,6 +44,7 @@ export default defineComponent({
 #CustomApp {
   width: 100vw;
   height: 100vh;
+  max-height: -webkit-fill-available;
   position: relative;
   background-color: #fff;
 }
