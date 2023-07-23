@@ -49,7 +49,7 @@ export default defineComponent({
       editor = useCardEditor("CardEditorCanvas", 700, 400);
       canvas = editor.canvas;
 
-      showToolPanel("card-book");
+      onToolPicked("card-book");
 
       function handleSelected(e) {
         if (e.selected.length > 1) {
@@ -85,11 +85,27 @@ export default defineComponent({
 
         sampleIsReady.value = true
 
-        showToolPanel('card-book')
+        selectTool('text-form')
+
+        calcToolPanelHeight()
       });
     });
 
-    function showToolPanel(target) {
+    function onToolPicked(target) {
+      if (target === 'text-form') {
+        const text = editor.addText('新增文字', {
+          fontSize: 16,
+          left: 100,
+          top: 100,
+          fill: '#333',
+          fontFamily: 'Nunito'
+        })
+        editor.canvas.setActiveObject(text);
+      }
+      selectTool(target)
+    }
+
+    function selectTool(target) {
       targetDetailPanel.value = target;
     }
 
@@ -115,6 +131,28 @@ export default defineComponent({
       img.src = card.image_url;
     }
 
+    function calcToolPanelHeight() {
+      const windowHeight = window.innerHeight
+      const topBarHeight = document.getElementById('TopBar').offsetHeight
+      const canvasHeight = document.getElementById('CardEditorCanvasContainer').offsetHeight
+      const MainToolBarHeight = document.getElementById('MainToolBar').offsetHeight
+
+      const elementTotalHeight = topBarHeight + canvasHeight + MainToolBarHeight
+
+      const minHeight = 660
+
+      const detailPanelHeight = windowHeight <= minHeight
+        ? (minHeight - elementTotalHeight) + 'px'
+        : (windowHeight - elementTotalHeight) + 'px'
+
+      document.getElementById('DetailPanel').style.height = detailPanelHeight
+    }
+
+    window.addEventListener('resize', e => {
+      e.preventDefault()
+      calcToolPanelHeight()
+    })
+
     function onStickerPicked(sticker) {
       const img = new Image
       img.addEventListener('load', () => {
@@ -132,7 +170,7 @@ export default defineComponent({
       targetObjectIndex,
       targetDetailPanel,
       changeCanvasBackground,
-      showToolPanel,
+      onToolPicked,
       onStickerPicked
     };
   },
@@ -146,7 +184,7 @@ export default defineComponent({
     <div id="CardEditorCanvasContainer">
       <canvas id="CardEditorCanvas"></canvas>
     </div>
-    <div>
+    <div id="DetailPanel" style="overflow: auto;">
       <div v-show="targetDetailPanel === 'card-book'">
         <CardBook :cards="cards" @cardSelected="changeCanvasBackground" />
       </div>
@@ -158,7 +196,7 @@ export default defineComponent({
       </div>
     </div>
     <div>
-      <MainToolBar @toolPicked="showToolPanel" />
+      <MainToolBar @toolPicked="onToolPicked" />
     </div>
   </div>
 </template>

@@ -98,10 +98,12 @@ export default defineComponent({
   display: flex;
   width: 100%;
   padding: 0 15px;
+  overflow-x: auto;
   &__item {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     margin-right: 15px;
+    flex: none;
     scale: 0.7;
     display: flex;
     align-items: center;
@@ -119,8 +121,8 @@ export default defineComponent({
 }
 
 .my-upload {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   margin-right: 15px;
   border: 2px solid orange;
   display: flex;

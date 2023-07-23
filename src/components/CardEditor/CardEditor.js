@@ -14,6 +14,7 @@ export function useCardEditor(el, width, height) {
     function addText(str, options = {}) {
         var text = new fabric.Textbox(str, options);
         canvas.add(text);
+        return text
     }
 
     function calcNewSizeScale(img, maxLength = 150) {
