@@ -214,6 +214,11 @@ export default defineComponent({
 }
 
 #DetailPanel {
-  height: calc((var(--vh) * 100) - 45px - 400px - 80px);
+  height: calc(100vh - 45px - 400px - 80px);
+}
+@supports (-webkit-touch-callout: none) {
+  #DetailPanel {
+    height: calc(100vh - 45px - 400px - 80px - 80px) !important;
+  }
 }
 </style>
