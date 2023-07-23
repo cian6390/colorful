@@ -87,9 +87,14 @@ export default defineComponent({
 
         selectTool('text-form')
 
-        calcToolPanelHeight()
+        calcViewHeight()
       });
     });
+
+    function calcViewHeight() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
 
     function onToolPicked(target) {
       if (target === 'text-form') {
@@ -131,25 +136,13 @@ export default defineComponent({
       img.src = card.image_url;
     }
 
-    function calcToolPanelHeight() {
-      const windowHeight = window.innerHeight
-      const topBarHeight = document.getElementById('TopBar').offsetHeight
-      const canvasHeight = document.getElementById('CardEditorCanvasContainer').offsetHeight
-      const MainToolBarHeight = document.getElementById('MainToolBar').offsetHeight
-
-      const elementTotalHeight = topBarHeight + canvasHeight + MainToolBarHeight
-
-      const minHeight = 660
-
-      const detailPanelHeight = windowHeight <= minHeight
-        ? (minHeight - elementTotalHeight) + 'px'
-        : (windowHeight - elementTotalHeight) + 'px'
-
-      document.getElementById('DetailPanel').style.height = detailPanelHeight
-    }
-
+    const vw = window.innerWidth
     window.addEventListener('resize', e => {
       e.preventDefault()
+      if (vw === window.innerWidth) {
+        return
+      }
+
       calcToolPanelHeight()
     })
 
@@ -218,5 +211,9 @@ export default defineComponent({
 #TopBar {
   height: 45px;
   border-bottom: 1px solid #ccc;
+}
+
+#DetailPanel {
+  height: calc((var(--vh) * 100) - 45px - 400px - 80px);
 }
 </style>
