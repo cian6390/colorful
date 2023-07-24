@@ -64,6 +64,11 @@ export default defineComponent({
     });
 
     function toggleCanvasSize() {
+
+      const el = document.querySelector(".canvas-container");
+      el.style.top = 0
+      el.style.left = 0
+
       if (canvasSize.value === "large") {
         const dWidth = window.innerWidth;
         const dHeight = dWidth * (4 / 7);
@@ -198,44 +203,27 @@ export default defineComponent({
       targetObject.value = null;
     }
 
+    const viewPosition = reactive({ x: 1, y: 1})
     function scrollCanvas(axis, offset) {
       const el = document.querySelector(".canvas-container");
-      const elParent = document.querySelector("#CardEditorCanvasContainer");
+
+      const xLarge = ['25%', '0', '-50%', '-100%']
+      const yLarge = ['25%', '0', '-25%']
 
       if (axis === "x") {
-        if (el.clientWidth <= elParent.clientWidth) {
-          return;
+        const newPosition = viewPosition.x + offset
+        if (newPosition < 0 || newPosition > xLarge.length) {
+          return
         }
-        if (offset > 0) {
-          if (el.style.left === "-50%") {
-            el.style.left = "-100%";
-          } else {
-            el.style.left = "-50%";
-          }
-        } else {
-          if (el.style.left === "-100%") {
-            el.style.left = "-50%";
-          } else {
-            el.style.left = "0";
-          }
-        }
+        viewPosition.x = newPosition
+        el.style.left = xLarge[newPosition]
       } else {
-        if (el.clientHeight <= elParent.clientHeight) {
-          return;
+        const newPosition = viewPosition.y + offset
+        if (newPosition < 0 || newPosition > yLarge.length) {
+          return
         }
-        if (offset > 0) {
-          if (el.style.top === "-50%") {
-            el.style.top = "-100%";
-          } else {
-            el.style.top = "-50%";
-          }
-        } else {
-          if (el.style.top === "-100%") {
-            el.style.top = "-50%";
-          } else {
-            el.style.top = "0";
-          }
-        }
+        viewPosition.y = newPosition
+        el.style.top = yLarge[newPosition]
       }
     }
 
@@ -263,16 +251,16 @@ export default defineComponent({
   <div id="CardEditorApp">
     <div id="TopBar">
       <div class="scroll-control-panel" v-if="canvasSize === 'large'">
-        <div class="item-icon" @click="scrollCanvas('y', -25)">
+        <div class="item-icon" @click="scrollCanvas('y', -1)">
           <ArrowUpIcon />
         </div>
-        <div class="item-icon" @click="scrollCanvas('y', 25)">
+        <div class="item-icon" @click="scrollCanvas('y', 1)">
           <ArrowDownIcon />
         </div>
-        <div class="item-icon" @click="scrollCanvas('x', -25)">
+        <div class="item-icon" @click="scrollCanvas('x', -1)">
           <ArrowLeftIcon />
         </div>
-        <div class="item-icon" @click="scrollCanvas('x', 25)">
+        <div class="item-icon" @click="scrollCanvas('x', 1)">
           <ArrowRightIcon />
         </div>
       </div>
@@ -319,7 +307,7 @@ export default defineComponent({
 #CardEditorCanvasContainer {
   flex: none;
   width: 100%;
-  height: 400px;
+  height: max(300px, 45vh);
   overflow-x: auto;
 }
 
@@ -362,6 +350,6 @@ export default defineComponent({
 .canvas-container {
   top: 0;
   left: 0;
-  transition: top, left linear 0.3s;
+  transition: top linear 0.3s, left linear 0.3s;
 }
 </style>
