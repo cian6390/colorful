@@ -54,6 +54,11 @@ export function useCardEditor(el, width, height) {
         return canvas.getObjects().indexOf(targetObject);
     }
 
+    function objectLayerDown(targetObject, intersecting = true) {
+        canvas.sendBackwards(targetObject, intersecting);
+        return canvas.getObjects().indexOf(targetObject);
+    }
+
     function download() {
         const dataURL = canvas.toDataURL({
             width: canvas.width,
@@ -97,6 +102,7 @@ export function useCardEditor(el, width, height) {
         addImage,
         addText,
         objectLayerUp,
+        objectLayerDown,
         setupExample,
         selectedObject
     }

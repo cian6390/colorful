@@ -227,6 +227,14 @@ export default defineComponent({
       }
     }
 
+    function changeTargetObjectLayer(direction) {
+      if (direction === 'up') {
+        editor.objectLayerUp(targetObject._rawValue)
+      } else {
+        editor.objectLayerDown(targetObject._rawValue)
+      }
+    }
+
     return {
       canvasSize,
       isDevMode,
@@ -237,6 +245,7 @@ export default defineComponent({
       targetObject,
       targetObjectIndex,
       targetDetailPanel,
+      changeTargetObjectLayer,
       changeCanvasBackground,
       onToolPicked,
       onStickerPicked,
@@ -276,6 +285,8 @@ export default defineComponent({
     </div>
     <div id="DetailPanel" style="overflow: auto">
       <button v-if="targetObject" @click="deleteTargetObject">刪除物件</button>
+      <button v-if="targetObject" @click="changeTargetObjectLayer('up')">圖層向上</button>
+      <button v-if="targetObject" @click="changeTargetObjectLayer('down')">圖層向下</button>
       <div v-show="targetDetailPanel === 'card-book'">
         <CardBook :cards="cards" @cardSelected="changeCanvasBackground" />
       </div>
@@ -309,6 +320,10 @@ export default defineComponent({
   width: 100%;
   height: max(300px, 45vh);
   overflow-x: auto;
+  background-color: #f1f1f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #TopBar {
